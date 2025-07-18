@@ -1,0 +1,21 @@
+{
+    "compilerOptions";
+    {
+        "target";
+        "es2016",
+            "module";
+        "commonjs",
+            "esModuleInterop";
+        true,
+            "strict";
+        true,
+            "skipLibCheck";
+        true,
+            "outDir";
+        "dist";
+    }
+    "exclude";
+    ["node_modules"],
+        "include";
+    ["src/**/*"];
+}
