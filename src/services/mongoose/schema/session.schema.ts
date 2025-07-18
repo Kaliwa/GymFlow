@@ -8,12 +8,12 @@ export function sessionSchema(): Schema<Session> {
         },
         user: {
             type: Schema.Types.ObjectId,
-            ref: 'User', // nom du model à charger
+            ref: 'User',
             required: true
         }
     }, {
-        timestamps: true, // createdAt + updatedAt
+        timestamps: true,
         collection: "sessions",
-        versionKey: false, // désactive le versionning de model
+        versionKey: false,
     });
 }

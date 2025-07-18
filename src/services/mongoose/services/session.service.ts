@@ -10,7 +10,11 @@ export class SessionService {
     readonly sessionModel: Model<Session>;
 
     constructor(public readonly connection: Mongoose) {
-        this.sessionModel = connection.model('Session', sessionSchema());
+        try {
+            this.sessionModel = connection.model<Session>('Session');
+        } catch (error) {
+            this.sessionModel = connection.model('Session', sessionSchema());
+        }
     }
 
     async createSession(session: CreateSession): Promise<Session> {
@@ -21,8 +25,9 @@ export class SessionService {
         if(!isValidObjectId(sessionId)) {
             return null;
         }
-        const session = this.sessionModel.findOne({
+        const session = await this.sessionModel.findOne({
             _id: sessionId,
+            expirationDate: { $gt: new Date() }
         }).populate('user');
         return session;
     }

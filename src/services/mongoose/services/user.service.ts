@@ -12,7 +12,11 @@ export class UserService {
     readonly userModel: Model<User>;
 
     constructor(public readonly connection: Mongoose) {
-        this.userModel = connection.model('User', userSchema());
+        try {
+            this.userModel = connection.model<User>('User');
+        } catch (error) {
+            this.userModel = connection.model('User', userSchema());
+        }
     }
 
     async findUser(email: string, password?: string): Promise<User | null>{
@@ -23,6 +27,13 @@ export class UserService {
         }
 
         return this.userModel.findOne(filter)
+    }
+
+    async findUserById(userId: string): Promise<User | null>{
+        if(!isValidObjectId(userId)) {
+            return null;
+        }
+        return this.userModel.findById(userId)
     }
 
     async createUser(user: CreateUser): Promise<User> {

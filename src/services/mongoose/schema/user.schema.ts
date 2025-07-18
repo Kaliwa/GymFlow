@@ -1,5 +1,7 @@
 import {Schema} from "mongoose";
 import {User, UserRole} from "../../../models";
+import { addressSchema } from "./address.schema";
+import { socialLinksSchema } from "./social-links.schema";
 
 export function userSchema(): Schema<User> {
     return new Schema<User>({
@@ -43,45 +45,15 @@ export function userSchema(): Schema<User> {
             type: String,
             required: false
         },
-        address: {
-            street: {
-                type: String,
-                required: false
-            },
-            city: {
-                type: String,
-                required: false
-            },
-            zipCode: {
-                type: String,
-                required: false
-            },
-            country: {
-                type: String,
-                required: false
-            }
-        },
+        address: addressSchema(false),
         bio: {
             type: String,
             required: false
         },
-        socialLinks: {
-            instagram: {
-                type: String,
-                required: false
-            },
-            facebook: {
-                type: String,
-                required: false
-            },
-            twitter: {
-                type: String,
-                required: false
-            }
-        }
+        socialLinks: socialLinksSchema()
     }, {
-        timestamps: true, // createdAt + updatedAt
+        timestamps: true,
         collection: "users",
-        versionKey: false, // désactive le versionning de model
+        versionKey: false,
     });
 }

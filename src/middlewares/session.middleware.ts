@@ -1,5 +1,5 @@
 import { RequestHandler, Request, Response, NextFunction } from "express";
-import { SessionService } from "../services/mongoose";
+import { SessionService, UserService } from "../services/mongoose/services";
 import { User, Session } from "../models";
 
 declare module 'express'  {
@@ -8,7 +8,7 @@ declare module 'express'  {
         user?: User;
     }
 }
-export function sessionMiddleware(SessionService: SessionService): RequestHandler {
+export function sessionMiddleware(sessionService: SessionService, userService: UserService): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
         const authorization = req.headers['authorization'] as string | undefined;
         if (!authorization) {
@@ -24,14 +24,21 @@ export function sessionMiddleware(SessionService: SessionService): RequestHandle
         }
 
         const token = parts[1];
-        const session = await SessionService.findActiveSession(token);
+        const session = await sessionService.findActiveSession(token);
 
         if (!session) {
             res.status(401).json({ error: 'No session' });
             return;
         }
+
+        const user = await userService.findUserById((session.user as User)._id);
+        if (!user) {
+            res.status(401).json({ error: 'User not found' });
+            return;
+        }
+
         req.session = session;
-        req.user = session.user as User;
+        req.user = user;
         next();
     }
 }

@@ -56,11 +56,39 @@ export class AuthController {
         }
     }
 
+    async updateUserRole(req: Request, res: Response) {
+        if (!req.user) {
+            return res.status(401).json({ error: 'User not authenticated' });
+        }
+
+        if (req.user.role !== UserRole.SUPER_ADMIN) {
+            return res.status(403).json({ error: 'Only SUPER_ADMIN can update user roles' });
+        }
+
+        const { userId, role } = req.body;
+
+        if (!userId || !role) {
+            return res.status(400).json({ error: 'userId and role are required' });
+        }
+
+        if (!Object.values(UserRole).includes(role)) {
+            return res.status(400).json({ error: 'Invalid role' });
+        }
+
+        try {
+            await this.userService.updateRole(userId, role);
+            res.json({ message: 'User role updated successfully' });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to update user role' });
+        }
+    }
+
     buildRouter(): Router {
         const router = Router();
         router.post('/login', json(), this.login.bind(this));
         router.post('/subscribe', json(), this.subscribe.bind(this));
-        router.get('/me', sessionMiddleware(this.sessionService), this.me.bind(this));
+        router.get('/me', sessionMiddleware(this.sessionService, this.userService), this.me.bind(this));
+        router.post('/update-role', sessionMiddleware(this.sessionService, this.userService), json(), this.updateUserRole.bind(this));
         return router;
     }
 }

@@ -1,4 +1,5 @@
 import { Timestamps } from "./timestamps";
+import { Address, SocialLinks } from "./common.interface";
 
 export enum UserRole {
     SUPER_ADMIN = 'SUPER_ADMIN',
@@ -30,16 +31,7 @@ export interface User extends Timestamps {
     avatar?: string;
     dateOfBirth?: Date;
     phoneNumber?: string;
-    address?: {
-        street?: string;
-        city?: string;
-        zipCode?: string;
-        country?: string;
-    };
+    address?: Address;
     bio?: string;
-    socialLinks?: {
-        instagram?: string;
-        facebook?: string;
-        twitter?: string;
-    };
+    socialLinks?: SocialLinks;
 }

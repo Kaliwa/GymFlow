@@ -10,12 +10,14 @@ config();
 async function startServer() {
     const connection = await openConnection();
     const userService = new UserService(connection);
+    const sessionService = new SessionService(connection);
+
     await bootstrapAPI(userService);
-    const sessionService = new SessionService(connection)
+    
     const app = express();
     const authController = new AuthController(userService, sessionService);
-    app.use("/auth", authController.buildRouter());
 
+    app.use("/auth", authController.buildRouter());
     app.listen(process.env.PORT, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     });
