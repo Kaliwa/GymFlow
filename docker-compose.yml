@@ -1,0 +1,35 @@
+services:
+  gymflow_mongo:
+    image: mongo:latest
+    container_name: gymflow_mongo
+    ports:
+      - "8001:27017"
+    volumes:
+      - gymflow_mongo_data:/data/db
+    networks:
+      - gymflow_network
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    restart: always
+  mongo_express:
+    image: mongo-express
+    container_name: gymflow_mongo_express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: gymflow_mongo
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    networks:
+      - gymflow_network
+    restart: always
+
+volumes:
+  gymflow_mongo_data:
+
+networks:
+  gymflow_network:
+    driver: bridge
