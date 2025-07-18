@@ -1,7 +1,8 @@
 import { config } from "dotenv";
 import express  from "express";
 import { AuthController } from "./controllers/auth.controller";
-import { SessionService, UserService } from "./services/mongoose/services";
+import { GymController } from "./controllers/gym.controller";
+import { SessionService, UserService, GymService } from "./services/mongoose/services";
 import { openConnection } from "./services/mongoose/utils/mongoose-connect.utils";
 import { UserRole } from "./models";
 
@@ -11,14 +12,16 @@ async function startServer() {
     const connection = await openConnection();
     const userService = new UserService(connection);
     const sessionService = new SessionService(connection);
-
+    const gymService = new GymService(connection);
+    
     await bootstrapAPI(userService);
     
     const app = express();
     const authController = new AuthController(userService, sessionService);
+    const gymController = new GymController(gymService, sessionService, userService);
 
     app.use("/auth", authController.buildRouter());
-    app.listen(process.env.PORT, () => {
+    app.use("/gyms", gymController.buildRouter());    app.listen(process.env.PORT, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     });
 }
