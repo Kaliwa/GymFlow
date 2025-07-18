@@ -21,7 +21,8 @@ async function startServer() {
     const gymController = new GymController(gymService, sessionService, userService);
 
     app.use("/auth", authController.buildRouter());
-    app.use("/gyms", gymController.buildRouter());    app.listen(process.env.PORT, () => {
+    app.use("/gyms", gymController.buildRouter());    
+    app.listen(process.env.PORT, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     });
 }
