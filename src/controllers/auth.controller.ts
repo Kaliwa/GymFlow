@@ -1,19 +1,19 @@
 import { Request, Response, Router, json } from "express";
 import { UserService, SessionService } from "../services/mongoose/services";
-import { Session, UserRole } from "../models";
+import { UserRole } from "../models";
 import { sessionMiddleware } from "../middlewares";
 
 export class AuthController {
     constructor(public readonly userService: UserService, public readonly sessionService: SessionService) { }
 
     async login(req: Request, res: Response) {
-        if(!req.body || !req.body.email || !req.body.password) {
+        if (!req.body || !req.body.email || !req.body.password) {
             res.status(400).end()
             return;
         }
 
         const user = await this.userService.findUser(
-            req.body.email, 
+            req.body.email,
             req.body.password
         );
 
@@ -65,10 +65,10 @@ export class AuthController {
             return res.status(403).json({ error: 'Only SUPER_ADMIN can update user roles' });
         }
 
-        const { userId, role } = req.body;
+        const { email, role } = req.body;
 
-        if (!userId || !role) {
-            return res.status(400).json({ error: 'userId and role are required' });
+        if (!email || !role) {
+            return res.status(400).json({ error: 'email and role are required' });
         }
 
         if (!Object.values(UserRole).includes(role)) {
@@ -76,7 +76,7 @@ export class AuthController {
         }
 
         try {
-            await this.userService.updateRole(userId, role);
+            await this.userService.updateRoleByEmail(email, role);
             res.json({ message: 'User role updated successfully' });
         } catch (error) {
             res.status(500).json({ error: 'Failed to update user role' });

@@ -44,14 +44,10 @@ export class UserService {
         })
     }
 
-    async updateRole(userId: string, role: UserRole): Promise<void> {
-        if(!isValidObjectId(userId)) {
-            return;
-        }
-
+    async updateRoleByEmail(email: string, role: UserRole): Promise<void> {
         await this.userModel.updateOne(
-            {_id: userId},
-            {$set: {role: role}}
+            { email: email },
+            { $set: { role: role } }
         )
     }
 }

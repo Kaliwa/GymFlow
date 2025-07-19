@@ -1,9 +1,7 @@
-import { json, Request, Response, Router } from "express";
-import express from "express";
 import { GymService, CreateGymRequest, UserService } from "../services/mongoose/services";
 import { SessionService } from "../services/mongoose/services";
+import { json, Request, Response, Router } from "express";
 import { sessionMiddleware } from "../middlewares";
-import { GymStatus, User } from "../models";
 
 export class GymController {
     
