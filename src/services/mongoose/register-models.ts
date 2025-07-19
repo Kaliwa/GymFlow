@@ -5,6 +5,10 @@ import { gymSchema } from "./schema/gym.schema";
 import { exerciseSchema } from "./schema/exercise.schema";
 import { equipmentSchema } from "./schema/equipment.schema";
 import { challengeSchema } from "./schema/challenge.schema";
+import { badgeSchema } from "./schema/badge.schema";
+import { userBadgeSchema } from "./schema/user-badge.schema";
+import { workoutSessionSchema } from "./schema/workout-session.schema";
+import { userProgressSchema } from "./schema/user-progress.schema";
 
 export function registerAllModels(connection: Mongoose) {
     if (!connection.models.User) {
@@ -29,5 +33,21 @@ export function registerAllModels(connection: Mongoose) {
 
   if (!connection.models.Challenge) {
     connection.model("Challenge", challengeSchema());
+  }
+
+  if (!connection.models.Badge) {
+    connection.model("Badge", badgeSchema());
+  }
+
+  if (!connection.models.UserBadge) {
+    connection.model("UserBadge", userBadgeSchema());
+  }
+
+  if (!connection.models.WorkoutSession) {
+    connection.model("WorkoutSession", workoutSessionSchema());
+  }
+
+  if (!connection.models.UserProgress) {
+    connection.model("UserProgress", userProgressSchema());
   }
 }

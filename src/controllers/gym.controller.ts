@@ -258,7 +258,7 @@ export class GymController {
         const { id } = req.params;
    
         const { equipments } = req.body;
-        if (!Array.isArray(equipments)) {
+        if (!equipments?.length) {
             res.status(400).json({ _error: "equipments doit être un tableau d'IDs" });
             return;
         }

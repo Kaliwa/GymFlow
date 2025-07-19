@@ -65,7 +65,7 @@ export class AuthController {
             return res.status(400).json({ _error: 'email and role are required' });
         }
 
-        if (!Object.values(UserRole).includes(role)) {
+        if (!(role in UserRole)) {
             return res.status(400).json({ _error: 'Invalid role' });
         }
 

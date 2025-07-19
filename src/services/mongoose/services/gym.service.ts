@@ -26,7 +26,7 @@ export class GymService {
             return false;
         }
         const user = await this.userModel.findById(userId);
-        return user ? user.role === UserRole.GYM_OWNER : false;
+        return user ? (user.role === UserRole.GYM_OWNER || user.role === UserRole.SUPER_ADMIN) : false;
     }
 
     async createGymRequest(gymData: CreateGymRequest, ownerId: string): Promise<Gym | null> {
@@ -44,7 +44,7 @@ export class GymService {
     }
 
     async findEquipmentsByIds(equipmentIds: string[]): Promise<Equipment[]> {
-        if (!Array.isArray(equipmentIds) || equipmentIds.length === 0) {
+        if (!equipmentIds.length) {
             return [];
         }
         const validIds = equipmentIds.filter(id => isValidObjectId(id));
@@ -213,8 +213,8 @@ export class GymService {
 
     async updateGymEquipments(gymId: string, equipmentIds: string[]): Promise<Gym | null> {
         if (!isValidObjectId(gymId)) return null;
-        
-        if (!Array.isArray(equipmentIds) || equipmentIds.length === 0) {
+
+        if (!equipmentIds.length) {
             return this.gymModel.findByIdAndUpdate(
                 gymId,
                 { $set: { equipments: [] } },

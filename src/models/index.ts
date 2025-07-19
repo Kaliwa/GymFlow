@@ -6,3 +6,5 @@ export * from './common.interface';
 export * from './exercise.interface';
 export * from './equipment.interface';
 export * from './challenge.interface';
+export * from './badge.interface';
+export * from './workout.interface';

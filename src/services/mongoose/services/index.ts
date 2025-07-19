@@ -4,3 +4,5 @@ export * from './gym.service';
 export * from './exercise.service';
 export * from './equipment.service';
 export * from './challenge.service';
+export * from './badge.service';
+export * from './workout.service';

@@ -5,3 +5,7 @@ export * from './gym.schema';
 export * from './address.schema';
 export * from './contact-info.schema';
 export * from './social-links.schema';
+export * from './badge.schema';
+export * from './user-badge.schema';
+export * from './workout-session.schema';
+export * from './user-progress.schema';

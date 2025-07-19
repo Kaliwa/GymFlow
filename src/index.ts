@@ -7,8 +7,11 @@ import { ExerciseController } from "./controllers/exercise.controller";
 import { registerAllModels } from "./services/mongoose/register-models";
 import { EquipmentController } from "./controllers/equipment.controller";
 import { openConnection } from "./services/mongoose/utils/mongoose-connect.utils";
-import { EquipmentService , SessionService, UserService, GymService, ExerciseService, ChallengeService } from "./services/mongoose/services";
+import { EquipmentService , SessionService, UserService, GymService, ExerciseService, ChallengeService, BadgeService, WorkoutService } from "./services/mongoose/services";
 import { ChallengeController } from "./controllers/challenge.controller";
+import { BadgeController } from "./controllers/badge.controller";
+import { WorkoutController } from "./controllers/workout.controller";
+import { runMigrations } from "./migrations";
 
 config();
 
@@ -22,8 +25,22 @@ async function startServer() {
     const gymService = new GymService(connection);
     const equipmentService = new EquipmentService(connection);
     const challengeService = new ChallengeService(connection);
+    const badgeService = new BadgeService(connection);
+    const workoutService = new WorkoutService(connection);
 
-    await bootstrapAPI(userService);
+    const rootUser = await bootstrapAPI(userService);
+    
+    if (rootUser) {
+        await runMigrations({
+            userService,
+            gymService,
+            exerciseService,
+            equipmentService,
+            challengeService,
+            badgeService,
+            workoutService
+        });
+    }
 
     const app = express();
     const authController = new AuthController(userService, sessionService);
@@ -31,12 +48,16 @@ async function startServer() {
     const exerciseController = new ExerciseController(exerciseService, gymService, sessionService, userService);
     const equipmentController = new EquipmentController(equipmentService, sessionService, userService);
     const challengeController = new ChallengeController(challengeService, sessionService, userService);
+    const badgeController = new BadgeController(badgeService, workoutService, sessionService, userService);
+    const workoutController = new WorkoutController(workoutService, badgeService, sessionService, userService);
 
     app.use("/auth", authController.buildRouter());
     app.use("/gyms", gymController.buildRouter());    
     app.use("/exercises", exerciseController.buildRouter());
     app.use("/equipments", equipmentController.buildRouter());
     app.use("/challenges", challengeController.buildRouter());
+    app.use("/badges", badgeController.buildRouter());
+    app.use("/workouts", workoutController.buildRouter());
     app.listen(process.env.PORT, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     });
@@ -54,15 +75,18 @@ async function bootstrapAPI(userService: UserService) {
     const rootUser = await userService.findUser(process.env.GYMFLOW_ROOT_EMAIL)
 
     if(!rootUser) {
-        await userService.createUser({
+        const newRootUser = await userService.createUser({
             firstName: 'root',
             lastName: 'root',
             password: process.env.GYMFLOW_ROOT_PASSWORD,
             email: process.env.GYMFLOW_ROOT_EMAIL,
             role: UserRole.SUPER_ADMIN,
             isActive: true
-        })
+        });
+        return newRootUser;
     }
+    
+    return rootUser;
 }
 
 startServer().then(() => {

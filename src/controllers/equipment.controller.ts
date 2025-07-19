@@ -51,7 +51,7 @@ export class EquipmentController {
     const { id } = req.params;
     const { name, description } = req.body || {};
 
-    if (!req.params.id) {
+    if (!id) {
       return res.status(400).json({ _error: "ID manquant" });
     }
 
