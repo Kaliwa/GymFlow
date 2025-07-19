@@ -7,7 +7,8 @@ import { ExerciseController } from "./controllers/exercise.controller";
 import { registerAllModels } from "./services/mongoose/register-models";
 import { EquipmentController } from "./controllers/equipment.controller";
 import { openConnection } from "./services/mongoose/utils/mongoose-connect.utils";
-import { EquipmentService , SessionService, UserService, GymService, ExerciseService } from "./services/mongoose/services";
+import { EquipmentService , SessionService, UserService, GymService, ExerciseService, ChallengeService } from "./services/mongoose/services";
+import { ChallengeController } from "./controllers/challenge.controller";
 
 config();
 
@@ -20,6 +21,7 @@ async function startServer() {
     const exerciseService = new ExerciseService(connection);
     const gymService = new GymService(connection);
     const equipmentService = new EquipmentService(connection);
+    const challengeService = new ChallengeService(connection);
 
     await bootstrapAPI(userService);
 
@@ -28,11 +30,13 @@ async function startServer() {
     const gymController = new GymController(gymService, sessionService, userService);
     const exerciseController = new ExerciseController(exerciseService, gymService, sessionService, userService);
     const equipmentController = new EquipmentController(equipmentService, sessionService, userService);
+    const challengeController = new ChallengeController(challengeService, sessionService, userService);
 
     app.use("/auth", authController.buildRouter());
     app.use("/gyms", gymController.buildRouter());    
     app.use("/exercises", exerciseController.buildRouter());
     app.use("/equipments", equipmentController.buildRouter());
+    app.use("/challenges", challengeController.buildRouter());
     app.listen(process.env.PORT, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     });

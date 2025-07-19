@@ -1,3 +1,4 @@
+export * from './challenge.schema';
 export * from './user.schema';
 export * from './session.schema';
 export * from './gym.schema';
