@@ -1,17 +1,11 @@
 import { Mongoose, Model, isValidObjectId } from "mongoose";
 import { Equipment } from "../../../models";
-import { equipmentSchema } from "../schema/equipment.schema";
 
 export class EquipmentService {
   readonly equipmentModel: Model<Equipment>;
 
   constructor(public readonly _connection: Mongoose) {
-    try {
-      this.equipmentModel = _connection.model<Equipment>("Equipment");
-    } catch (_error) {
-      console.error(_error);
-      this.equipmentModel = _connection.model("Equipment", equipmentSchema());
-    }
+    this.equipmentModel = _connection.model<Equipment>("Equipment");
   }
 
   async findAll(): Promise<Equipment[]> {

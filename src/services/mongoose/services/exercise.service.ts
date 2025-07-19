@@ -1,17 +1,11 @@
 import { Mongoose, Model, isValidObjectId } from "mongoose";
 import { Exercise } from "../../../models";
-import { exerciseSchema } from "../schema/exercise.schema";
 
 export class ExerciseService {
   readonly exerciseModel: Model<Exercise>;
 
   constructor(public readonly _connection: Mongoose) {
-    try {
-      this.exerciseModel = _connection.model<Exercise>("Exercise");
-    } catch (_error) {
-      console.error(_error);
-      this.exerciseModel = _connection.model("Exercise", exerciseSchema());
-    }
+    this.exerciseModel = _connection.model<Exercise>("Exercise");
   }
 
   async findAll(isAdmin: boolean = false): Promise<Exercise[]> {

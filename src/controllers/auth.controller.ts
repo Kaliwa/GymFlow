@@ -78,12 +78,51 @@ export class AuthController {
         }
     }
 
+    async deactivateUser(req: Request, res: Response) {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ error: "ID manquant" });
+        try {
+            const user = await this._userService.deactivateUser(id);
+            if (!user) return res.status(404).json({ error: "Utilisateur non trouvé" });
+            res.json({ message: "Utilisateur désactivé", user });
+        } catch (e: any) {
+            res.status(500).json({ error: e.message || "Erreur lors de la désactivation" });
+        }
+    }
+
+    async activateUser(req: Request, res: Response) {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ error: "ID manquant" });
+        try {
+            const user = await this._userService.activateUser(id);
+            if (!user) return res.status(404).json({ error: "Utilisateur non trouvé" });
+            res.json({ message: "Utilisateur activé", user });
+        } catch (e: any) {
+            res.status(500).json({ error: e.message || "Erreur lors de l'activation" });
+        }
+    }
+
+    async deleteUser(req: Request, res: Response) {
+        const { id } = req.params;
+        if (!id) return res.status(400).json({ error: "ID manquant" });
+        try {
+            const ok = await this._userService.deleteUser(id);
+            if (!ok) return res.status(404).json({ error: "Utilisateur non trouvé" });
+            res.json({ message: "Utilisateur supprimé" });
+        } catch (e: any) {
+            res.status(500).json({ error: e.message || "Erreur lors de la suppression" });
+        }
+    }
+
     buildRouter(): Router {
         const router = Router();
         router.post('/login', json(), this.login.bind(this));
         router.post('/subscribe', json(), this.subscribe.bind(this));
         router.get('/me', sessionMiddleware(this._sessionService, this._userService), this.me.bind(this));
         router.post('/update-role', sessionMiddleware(this._sessionService, this._userService), requireRoleLevel(3), json(), this.updateUserRole.bind(this));
+        router.patch('/deactivate/:id', sessionMiddleware(this._sessionService, this._userService), requireRoleLevel(3), this.deactivateUser.bind(this));
+        router.patch('/activate/:id', sessionMiddleware(this._sessionService, this._userService), requireRoleLevel(3), this.activateUser.bind(this));
+        router.delete('/:id', sessionMiddleware(this._sessionService, this._userService), requireRoleLevel(3), this.deleteUser.bind(this));
         return router;
     }
 }

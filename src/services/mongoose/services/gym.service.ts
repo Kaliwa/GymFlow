@@ -1,7 +1,5 @@
 import { Mongoose, Model, isValidObjectId } from "mongoose";
 import { Equipment, Gym, GymStatus, User, UserRole, getUserRoleLevel } from "../../../models";
-import { gymSchema } from "../schema/gym.schema";
-import { userSchema } from "../schema/user.schema";
 
 export type CreateGymRequest = Omit<Gym, '_id' | 'createdAt' | 'updatedAt' | 'status' | 'submittedAt' | 'reviewedAt' | 'reviewedBy' | 'approvedAt' | 'suspendedAt' | 'closedAt' | 'approvalNotes' | 'rejectionReason' | 'suspensionReason' | 'isActive' | 'rating' | 'totalReviews'>;
 
@@ -11,19 +9,8 @@ export class GymService {
     readonly userModel: Model<User>;
 
     constructor(public readonly _connection: Mongoose) {
-        try {
-            this.gymModel = _connection.model<Gym>('Gym');
-        } catch (_) {
-            console.error(_);
-            this.gymModel = _connection.model('Gym', gymSchema());
-        }
-
-        try {
-            this.userModel = _connection.model<User>('User');
-        } catch (_error) {
-            console.error(_error);
-            this.userModel = _connection.model('User', userSchema());
-        }
+        this.gymModel = _connection.model<Gym>('Gym');
+        this.userModel = _connection.model<User>('User');
     }
 
     private async isUserSuperAdmin(userId: string): Promise<boolean> {

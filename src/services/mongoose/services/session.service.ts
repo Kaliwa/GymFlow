@@ -1,6 +1,5 @@
 import { Mongoose, Model, isValidObjectId } from "mongoose";
 import { Session } from "../../../models";
-import { sessionSchema } from "../schema";
 
 
 export type CreateSession = Omit<Session, '_id' | 'createdAt' | 'updatedAt'>;
@@ -10,12 +9,7 @@ export class SessionService {
     readonly sessionModel: Model<Session>;
 
     constructor(public readonly _connection: Mongoose) {
-        try {
-            this.sessionModel = _connection.model<Session>('Session');
-        } catch (_error) {
-            console.error(_error);
-            this.sessionModel = _connection.model('Session', sessionSchema());
-        }
+        this.sessionModel = _connection.model<Session>('Session');
     }
 
     async createSession(session: CreateSession): Promise<Session> {

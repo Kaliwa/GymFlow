@@ -1,28 +1,21 @@
-import {Mongoose, Model, FilterQuery, isValidObjectId} from "mongoose";
-import {User, UserRole} from "../../../models";
+import { Mongoose, Model, FilterQuery, isValidObjectId } from "mongoose";
+import { User, UserRole } from "../../../models";
 import { sha512 } from "../../../utils";
-import {userSchema} from "../schema";
 
 export type CreateUser = Omit<User, '_id' | 'createdAt' | 'updatedAt'> & {
     isActive?: boolean;
 }
 
 export class UserService {
-
     readonly userModel: Model<User>;
 
     constructor(public readonly _connection: Mongoose) {
-        try {
-            this.userModel = _connection.model<User>('User');
-        } catch (_error) {
-            console.error(_error);
-            this.userModel = _connection.model('User', userSchema());
-        }
+        this.userModel = _connection.model<User>('User');
     }
 
-    async findUser(email: string, password?: string): Promise<User | null>{
-        const filter: FilterQuery<User> = {email: email};
-        
+    async findUser(email: string, password?: string): Promise<User | null> {
+        const filter: FilterQuery<User> = { email: email };
+
         if (password) {
             filter.password = sha512(password);
         }
@@ -30,8 +23,8 @@ export class UserService {
         return this.userModel.findOne(filter)
     }
 
-    async findUserById(userId: string): Promise<User | null>{
-        if(!isValidObjectId(userId)) {
+    async findUserById(userId: string): Promise<User | null> {
+        if (!isValidObjectId(userId)) {
             return null;
         }
         return this.userModel.findById(userId)
@@ -39,7 +32,7 @@ export class UserService {
 
     async createUser(user: CreateUser): Promise<User> {
         return this.userModel.create({
-            ...user, 
+            ...user,
             password: sha512(user.password),
             isActive: user.isActive ?? true
         })
@@ -50,5 +43,17 @@ export class UserService {
             { email: email },
             { $set: { role: role } }
         )
+    }
+    async deactivateUser(id: string) {
+        return this.userModel.findByIdAndUpdate(id, { isActive: false }, { new: true });
+    }
+
+    async activateUser(id: string) {
+        return this.userModel.findByIdAndUpdate(id, { isActive: true }, { new: true });
+    }
+
+    async deleteUser(id: string) {
+        const res = await this.userModel.findByIdAndDelete(id);
+        return res;
     }
 }

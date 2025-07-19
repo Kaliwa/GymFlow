@@ -1,31 +1,34 @@
-import { config } from "dotenv";
 import express  from "express";
-import { AuthController } from "./controllers/auth.controller";
-import { EquipmentController } from "./controllers/equipment.controller";
-import { ExerciseController } from "./controllers/exercise.controller";
-import { GymController } from "./controllers/gym.controller";
+import { config } from "dotenv";
 import { UserRole } from "./models";
-import { EquipmentService , SessionService, UserService, GymService, ExerciseService } from "./services/mongoose/services";
+import { GymController } from "./controllers/gym.controller";
+import { AuthController } from "./controllers/auth.controller";
+import { ExerciseController } from "./controllers/exercise.controller";
+import { registerAllModels } from "./services/mongoose/register-models";
+import { EquipmentController } from "./controllers/equipment.controller";
 import { openConnection } from "./services/mongoose/utils/mongoose-connect.utils";
+import { EquipmentService , SessionService, UserService, GymService, ExerciseService } from "./services/mongoose/services";
 
 config();
 
 async function startServer() {
     const connection = await openConnection();
+    registerAllModels(connection);
+
     const userService = new UserService(connection);
     const sessionService = new SessionService(connection);
     const exerciseService = new ExerciseService(connection);
     const gymService = new GymService(connection);
     const equipmentService = new EquipmentService(connection);
-    
+
     await bootstrapAPI(userService);
-    
+
     const app = express();
     const authController = new AuthController(userService, sessionService);
     const gymController = new GymController(gymService, sessionService, userService);
     const exerciseController = new ExerciseController(exerciseService, gymService, sessionService, userService);
     const equipmentController = new EquipmentController(equipmentService, sessionService, userService);
-    
+
     app.use("/auth", authController.buildRouter());
     app.use("/gyms", gymController.buildRouter());    
     app.use("/exercises", exerciseController.buildRouter());
