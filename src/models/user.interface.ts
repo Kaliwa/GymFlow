@@ -1,5 +1,5 @@
-import { Timestamps } from "./timestamps";
 import { Address, SocialLinks } from "./common.interface";
+import { Timestamps } from "./timestamps";
 
 export enum UserRole {
     SUPER_ADMIN = 'SUPER_ADMIN',

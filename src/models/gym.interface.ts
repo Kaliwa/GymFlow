@@ -1,5 +1,5 @@
-import { Timestamps } from "./timestamps";
 import { Address, ContactInfo } from "./common.interface";
+import { Timestamps } from "./timestamps";
 
 export enum GymStatus {
     PENDING = 'PENDING',
@@ -18,7 +18,7 @@ export interface Gym extends Timestamps {
     address: Address;
     contactInfo: ContactInfo;
     capacity: number;
-    equipments: string[];
+    equipments?: string[];
     images: string[];
     
     status: GymStatus;

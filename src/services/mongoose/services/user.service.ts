@@ -1,7 +1,7 @@
 import {Mongoose, Model, FilterQuery, isValidObjectId} from "mongoose";
 import {User, UserRole} from "../../../models";
-import {userSchema} from "../schema";
 import { sha512 } from "../../../utils";
+import {userSchema} from "../schema";
 
 export type CreateUser = Omit<User, '_id' | 'createdAt' | 'updatedAt'> & {
     isActive?: boolean;
@@ -11,11 +11,12 @@ export class UserService {
 
     readonly userModel: Model<User>;
 
-    constructor(public readonly connection: Mongoose) {
+    constructor(public readonly _connection: Mongoose) {
         try {
-            this.userModel = connection.model<User>('User');
-        } catch (error) {
-            this.userModel = connection.model('User', userSchema());
+            this.userModel = _connection.model<User>('User');
+        } catch (_error) {
+            console.error(_error);
+            this.userModel = _connection.model('User', userSchema());
         }
     }
 

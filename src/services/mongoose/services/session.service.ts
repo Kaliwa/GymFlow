@@ -9,11 +9,12 @@ export class SessionService {
 
     readonly sessionModel: Model<Session>;
 
-    constructor(public readonly connection: Mongoose) {
+    constructor(public readonly _connection: Mongoose) {
         try {
-            this.sessionModel = connection.model<Session>('Session');
-        } catch (error) {
-            this.sessionModel = connection.model('Session', sessionSchema());
+            this.sessionModel = _connection.model<Session>('Session');
+        } catch (_error) {
+            console.error(_error);
+            this.sessionModel = _connection.model('Session', sessionSchema());
         }
     }
 

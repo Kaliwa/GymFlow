@@ -1,7 +1,7 @@
-import { GymService, CreateGymRequest, UserService } from "../services/mongoose/services";
-import { SessionService } from "../services/mongoose/services";
 import { json, Request, Response, Router } from "express";
 import { sessionMiddleware } from "../middlewares";
+import { requireRoleLevel } from "../middlewares/role.middleware";
+import { GymService, CreateGymRequest, UserService , SessionService } from "../services/mongoose/services";
 
 export class GymController {
     
@@ -15,28 +15,28 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
             const gymData: CreateGymRequest = req.body;
             
             if (!gymData.name || !gymData.description || !gymData.address || !gymData.contactInfo) {
-                res.status(400).json({ error: 'Données manquantes' });
+                res.status(400).json({ _error: 'Données manquantes' });
                 return;
             }
 
             const gym = await this.gymService.createGymRequest(gymData, user._id);
             
             if (!gym) {
-                res.status(403).json({ error: 'Seuls les GYM_OWNER peuvent créer des demandes' });
+                res.status(403).json({ _error: 'Seuls les GYM_OWNER peuvent créer des demandes' });
                 return;
             }
 
             res.status(201).json(gym);
-        } catch (error) {
-            console.error('Erreur lors de la création de la demande:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la création de la demande:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -44,15 +44,15 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
             const requests = await this.gymService.findGymRequestsByOwner(user._id);
             res.json(requests);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des demandes:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la récupération des demandes:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -60,15 +60,15 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
             const requests = await this.gymService.findPendingGymRequests(user._id);
             res.json(requests);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des demandes:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la récupération des demandes:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -76,7 +76,7 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
@@ -86,14 +86,14 @@ export class GymController {
             const gym = await this.gymService.approveGymRequest(id, user._id, approvalNotes);
             
             if (!gym) {
-                res.status(403).json({ error: 'Impossible d\'approuver cette demande' });
+                res.status(403).json({ _error: 'Impossible d\'approuver cette demande' });
                 return;
             }
 
             res.json(gym);
-        } catch (error) {
-            console.error('Erreur lors de l\'approbation:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de l\'approbation:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -101,7 +101,7 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
@@ -111,14 +111,14 @@ export class GymController {
             const gym = await this.gymService.rejectGymRequest(id, user._id, rejectionReason);
             
             if (!gym) {
-                res.status(403).json({ error: 'Impossible de rejeter cette demande' });
+                res.status(403).json({ _error: 'Impossible de rejeter cette demande' });
                 return;
             }
 
             res.json(gym);
-        } catch (error) {
-            console.error('Erreur lors du rejet:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors du rejet:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -126,15 +126,15 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
             const gyms = await this.gymService.findGymsByOwner(user._id);
             res.json(gyms);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des gyms:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la récupération des gyms:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -142,9 +142,9 @@ export class GymController {
         try {
             const gyms = await this.gymService.findActiveGyms();
             res.json(gyms);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des gyms actifs:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la récupération des gyms actifs:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -154,14 +154,14 @@ export class GymController {
             const gym = await this.gymService.findGymById(id);
             
             if (!gym) {
-                res.status(404).json({ error: 'Gym non trouvé' });
+                res.status(404).json({ _error: 'Gym non trouvé' });
                 return;
             }
 
             res.json(gym);
-        } catch (error) {
-            console.error('Erreur lors de la récupération du gym:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la récupération du gym:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -169,7 +169,7 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
@@ -179,14 +179,14 @@ export class GymController {
             const gym = await this.gymService.suspendGym(id, user._id, suspensionReason);
             
             if (!gym) {
-                res.status(403).json({ error: 'Impossible de suspendre ce gym' });
+                res.status(403).json({ _error: 'Impossible de suspendre ce gym' });
                 return;
             }
 
             res.json(gym);
-        } catch (error) {
-            console.error('Erreur lors de la suspension:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la suspension:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -194,7 +194,7 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
@@ -203,14 +203,14 @@ export class GymController {
             const gym = await this.gymService.reactivateGym(id, user._id);
             
             if (!gym) {
-                res.status(403).json({ error: 'Impossible de réactiver ce gym' });
+                res.status(403).json({ _error: 'Impossible de réactiver ce gym' });
                 return;
             }
 
             res.json(gym);
-        } catch (error) {
-            console.error('Erreur lors de la réactivation:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la réactivation:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -218,7 +218,7 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
@@ -227,14 +227,14 @@ export class GymController {
             const gym = await this.gymService.closeGym(id, user._id);
             
             if (!gym) {
-                res.status(403).json({ error: 'Impossible de fermer ce gym' });
+                res.status(403).json({ _error: 'Impossible de fermer ce gym' });
                 return;
             }
 
             res.json(gym);
-        } catch (error) {
-            console.error('Erreur lors de la fermeture:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la fermeture:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
@@ -242,34 +242,56 @@ export class GymController {
         try {
             const user = req.user;
             if (!user) {
-                res.status(401).json({ error: 'Utilisateur non trouvé' });
+                res.status(401).json({ _error: 'Utilisateur non trouvé' });
                 return;
             }
 
             const stats = await this.gymService.getGymStats();
             res.json(stats);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des statistiques:', error);
-            res.status(500).json({ error: 'Erreur serveur' });
+        } catch (_error) {
+            console.error('Erreur lors de la récupération des statistiques:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
+        }
+    }
+
+    private async updateGymEquipments(req: Request, res: Response): Promise<void> {
+        const { id } = req.params;
+   
+        const { equipments } = req.body;
+        if (!Array.isArray(equipments)) {
+            res.status(400).json({ _error: "equipments doit être un tableau d'IDs" });
+            return;
+        }
+        try {
+            const gym = await this.gymService.updateGymEquipments(id, equipments);
+            if (!gym) {
+                res.status(404).json({ _error: "Gym non trouvé" });
+                return;
+            }
+            res.json(gym);
+        } catch (_error) {
+            console.error('Erreur lors de la mise à jour des équipements:', _error);
+            res.status(500).json({ _error: 'Erreur serveur' });
         }
     }
 
     buildRouter(): Router {
         const router = Router();
 
-        router.use(sessionMiddleware(this.sessionService, this.userService));        
+        router.use(sessionMiddleware(this.sessionService, this.userService));
         router.post('/requests', json(), this.createGymRequest.bind(this));
-        router.get('/requests/my', this.getMyGymRequests.bind(this));        
-        router.get('/requests/pending', this.getPendingGymRequests.bind(this));        
-        router.post('/requests/:id/approve', json(), this.approveGymRequest.bind(this));
-        router.post('/requests/:id/reject', json(), this.rejectGymRequest.bind(this));
+        router.get('/requests/my', this.getMyGymRequests.bind(this));
+        router.get('/requests/pending', requireRoleLevel(3), this.getPendingGymRequests.bind(this));
+        router.post('/requests/:id/approve', json(), requireRoleLevel(3), this.approveGymRequest.bind(this));
+        router.post('/requests/:id/reject', json(), requireRoleLevel(3), this.rejectGymRequest.bind(this));
         router.get('/my', this.getMyGyms.bind(this));
+        router.patch('/:id/equipments', json(), requireRoleLevel(3), this.updateGymEquipments.bind(this));
         router.get('/active', this.getActiveGyms.bind(this));
         router.get('/:id', this.getGymById.bind(this));
-        router.post('/:id/suspend', json(), this.suspendGym.bind(this));
-        router.post('/:id/reactivate', this.reactivateGym.bind(this));
-        router.post('/:id/close', this.closeGym.bind(this));
-        router.get('/stats/overview', this.getGymStats.bind(this));
+        router.post('/:id/suspend', json(), requireRoleLevel(3), this.suspendGym.bind(this));
+        router.post('/:id/reactivate', requireRoleLevel(3), this.reactivateGym.bind(this));
+        router.post('/:id/close', requireRoleLevel(3), this.closeGym.bind(this));
+        router.get('/stats/overview', requireRoleLevel(3), this.getGymStats.bind(this));
 
         return router;
     }

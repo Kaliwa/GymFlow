@@ -1,26 +1,28 @@
-import { Mongoose, Model, FilterQuery, isValidObjectId } from "mongoose";
-import { Gym, GymStatus, User, UserRole, getUserRoleLevel } from "../../../models";
+import { Mongoose, Model, isValidObjectId } from "mongoose";
+import { Equipment, Gym, GymStatus, User, UserRole, getUserRoleLevel } from "../../../models";
 import { gymSchema } from "../schema/gym.schema";
 import { userSchema } from "../schema/user.schema";
 
 export type CreateGymRequest = Omit<Gym, '_id' | 'createdAt' | 'updatedAt' | 'status' | 'submittedAt' | 'reviewedAt' | 'reviewedBy' | 'approvedAt' | 'suspendedAt' | 'closedAt' | 'approvalNotes' | 'rejectionReason' | 'suspensionReason' | 'isActive' | 'rating' | 'totalReviews'>;
 
 export class GymService {
-    
+
     readonly gymModel: Model<Gym>;
     readonly userModel: Model<User>;
 
-    constructor(public readonly connection: Mongoose) {
+    constructor(public readonly _connection: Mongoose) {
         try {
-            this.gymModel = connection.model<Gym>('Gym');
-        } catch (error) {
-            this.gymModel = connection.model('Gym', gymSchema());
+            this.gymModel = _connection.model<Gym>('Gym');
+        } catch (_) {
+            console.error(_);
+            this.gymModel = _connection.model('Gym', gymSchema());
         }
-        
+
         try {
-            this.userModel = connection.model<User>('User');
-        } catch (error) {
-            this.userModel = connection.model('User', userSchema());
+            this.userModel = _connection.model<User>('User');
+        } catch (_error) {
+            console.error(_error);
+            this.userModel = _connection.model('User', userSchema());
         }
     }
 
@@ -52,6 +54,18 @@ export class GymService {
             submittedAt: new Date(),
             isActive: true
         });
+    }
+
+    async findEquipmentsByIds(equipmentIds: string[]): Promise<Equipment[]> {
+        if (!Array.isArray(equipmentIds) || equipmentIds.length === 0) {
+            return [];
+        }
+        const validIds = equipmentIds.filter(id => isValidObjectId(id));
+        if (validIds.length === 0) {
+            return [];
+        }
+        const equipmentModel = this._connection.model<Equipment>('Equipment');
+        return equipmentModel.find({ _id: { $in: validIds } });
     }
 
     async findGymRequestsByOwner(ownerId: string): Promise<Gym[]> {
@@ -137,16 +151,16 @@ export class GymService {
             return [];
         }
 
-        return this.gymModel.find({ 
-            ownerId, 
-            status: GymStatus.APPROVED 
+        return this.gymModel.find({
+            ownerId,
+            status: GymStatus.APPROVED
         }).sort({ approvedAt: -1 });
     }
 
     async findActiveGyms(): Promise<Gym[]> {
-        return this.gymModel.find({ 
+        return this.gymModel.find({
             status: GymStatus.APPROVED,
-            isActive: true 
+            isActive: true
         }).sort({ approvedAt: -1 });
     }
 
@@ -208,6 +222,24 @@ export class GymService {
         );
 
         return updatedGym;
+    }
+
+    async updateGymEquipments(gymId: string, equipmentIds: string[]): Promise<Gym | null> {
+        if (!isValidObjectId(gymId)) return null;
+        
+        if (!Array.isArray(equipmentIds) || equipmentIds.length === 0) {
+            return this.gymModel.findByIdAndUpdate(
+                gymId,
+                { $set: { equipments: [] } },
+                { new: true }
+            );
+        }
+
+        return this.gymModel.findByIdAndUpdate(
+            gymId,
+            { $set: { equipments: equipmentIds } },
+            { new: true }
+        );
     }
 
     async closeGym(gymId: string, adminId: string): Promise<Gym | null> {

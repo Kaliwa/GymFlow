@@ -24,10 +24,7 @@ export function gymSchema(): Schema<Gym> {
             type: Number,
             required: true
         },
-        equipments: {
-            type: [String],
-            required: true
-        },
+        equipments: [{ type: Schema.Types.ObjectId, ref: 'Equipment' }],
         images: {
             type: [String],
             required: true,
