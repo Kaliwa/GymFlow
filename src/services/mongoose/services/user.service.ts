@@ -20,7 +20,13 @@ export class UserService {
             filter.password = sha512(password);
         }
 
-        return this.userModel.findOne(filter)
+        const user = await this.userModel.findOne(filter);
+
+        if (!user?.isActive) {
+            return null;
+        }
+
+        return user;
     }
 
     async findUserById(userId: string): Promise<User | null> {
