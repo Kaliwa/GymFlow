@@ -5,3 +5,4 @@ export * from "./gym.controller";
 export * from "./challenge.controller";
 export * from "./badge.controller";
 export * from "./workout.controller";
+export * from "./friendship.controller";

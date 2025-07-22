@@ -9,9 +9,12 @@ import { badgeSchema } from "./schema/badge.schema";
 import { userBadgeSchema } from "./schema/user-badge.schema";
 import { workoutSessionSchema } from "./schema/workout-session.schema";
 import { userProgressSchema } from "./schema/user-progress.schema";
+import { friendshipSchema } from "./schema/friendship.schema";
+import { challengeParticipationSchema } from "./schema/challenge-participation.schema";
+import { challengeInvitationSchema } from "./schema/challenge-invitation.schema";
 
 export function registerAllModels(connection: Mongoose) {
-    if (!connection.models.User) {
+  if (!connection.models.User) {
     connection.model("User", userSchema());
   }
 
@@ -49,5 +52,17 @@ export function registerAllModels(connection: Mongoose) {
 
   if (!connection.models.UserProgress) {
     connection.model("UserProgress", userProgressSchema());
+  }
+
+  if (!connection.models.Friendship) {
+    connection.model("Friendship", friendshipSchema());
+  }
+
+  if (!connection.models.ChallengeParticipation) {
+    connection.model("ChallengeParticipation", challengeParticipationSchema());
+  }
+
+  if (!connection.models.ChallengeInvitation) {
+    connection.model("ChallengeInvitation", challengeInvitationSchema());
   }
 }
