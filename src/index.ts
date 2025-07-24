@@ -18,12 +18,15 @@ import {
   WorkoutService,
   FriendshipService,
   ChallengeParticipationService,
+  ChallengeCommentService
 } from "./services/mongoose/services";
 import { ChallengeController } from "./controllers/challenge.controller";
 import { BadgeController } from "./controllers/badge.controller";
 import { WorkoutController } from "./controllers/workout.controller";
 import { FriendshipController } from "./controllers/friendship.controller";
+import { ChallengeCommentController } from "./controllers/challenge-comment.controller";
 import { runMigrations } from "./migrations";
+import { LeaderboardController } from "./controllers/leaderboard.controller";
 
 config();
 
@@ -43,6 +46,7 @@ async function startServer() {
   const challengeParticipationService = new ChallengeParticipationService(
     connection
   );
+  const challengeCommentService = new ChallengeCommentService(connection);
 
   const rootUser = await bootstrapAPI(userService);
 
@@ -102,6 +106,9 @@ async function startServer() {
     sessionService,
     userService
   );
+  
+  const challengeCommentController = new ChallengeCommentController(challengeCommentService, sessionService, userService);
+  const leaderboardController = new LeaderboardController(userService, workoutService, challengeService, sessionService);
 
   app.use("/auth", authController.buildRouter());
   app.use("/gyms", gymController.buildRouter());
@@ -111,6 +118,9 @@ async function startServer() {
   app.use("/badges", badgeController.buildRouter());
   app.use("/workouts", workoutController.buildRouter());
   app.use("/friends", friendshipController.buildRouter());
+  app.use("/challenge-comments", challengeCommentController.buildRouter());
+  app.use("/leaderboard", leaderboardController.buildRouter());
+  
   app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
   });

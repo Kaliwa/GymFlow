@@ -8,3 +8,4 @@ export * from "./badge.service";
 export * from "./workout.service";
 export * from "./friendship.service";
 export * from "./challenge-participation.service";
+export * from './comment.service';

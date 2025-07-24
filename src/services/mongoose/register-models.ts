@@ -12,6 +12,7 @@ import { userProgressSchema } from "./schema/user-progress.schema";
 import { friendshipSchema } from "./schema/friendship.schema";
 import { challengeParticipationSchema } from "./schema/challenge-participation.schema";
 import { challengeInvitationSchema } from "./schema/challenge-invitation.schema";
+import { challengeCommentSchema } from "./schema/comment.schema";
 
 export function registerAllModels(connection: Mongoose) {
   if (!connection.models.User) {
@@ -64,5 +65,8 @@ export function registerAllModels(connection: Mongoose) {
 
   if (!connection.models.ChallengeInvitation) {
     connection.model("ChallengeInvitation", challengeInvitationSchema());
+
+  if (!connection.models.ChallengeComment) {
+    connection.model("ChallengeComment", challengeCommentSchema());
   }
 }
