@@ -55,6 +55,8 @@ async function startServer() {
       challengeService,
       badgeService,
       workoutService,
+      friendshipService,
+      challengeParticipationService,
     });
   }
 
