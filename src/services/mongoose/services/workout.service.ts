@@ -214,6 +214,13 @@ export class WorkoutService {
             .sort({ startedAt: -1 });
     }
 
+    async getUserWorkoutCounts() {
+        return this.workoutSessionModel.aggregate([
+            { $group: { _id: "$userId", count: { $sum: 1 } } },
+            { $project: { userId: "$_id", count: 1, _id: 0 } }
+        ]);
+    }
+
     private calculateLevel(experiencePoints: number): number {
         return Math.max(1, Math.floor(Math.sqrt(experiencePoints) / 10));
     }

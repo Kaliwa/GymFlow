@@ -66,7 +66,6 @@ export async function seedUsers(userService: UserService): Promise<User[]> {
                 createdUsers.push(existingUser);
             }
         } catch (error) {
-            // Ignore errors silently
         }
     }
 

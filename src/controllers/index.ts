@@ -3,5 +3,7 @@ export * from "./equipment.controller";
 export * from "./exercise.controller";
 export * from "./gym.controller";
 export * from "./challenge.controller";
+export * from "./challenge-comment.controller";
 export * from "./badge.controller";
 export * from "./workout.controller";
+export * from "./leaderboard.controller";
