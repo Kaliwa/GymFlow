@@ -53,4 +53,12 @@ export class ChallengeService {
         if (!isValidObjectId(id)) return null;
         return this.challengeModel.findById(id);
     }
+
+  async getUserChallengeCounts() {
+    if (!this.challengeModel.collection.collectionName.includes('user_challenge')) return [];
+    return this.challengeModel.aggregate([
+      { $group: { _id: "$userId", count: { $sum: 1 } } },
+      { $project: { userId: "$_id", count: 1, _id: 0 } }
+    ]);
+  }
 }
