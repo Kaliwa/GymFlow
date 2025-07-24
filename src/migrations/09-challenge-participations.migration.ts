@@ -104,7 +104,7 @@ export async function seedChallengeParticipations(
 
       if (!existingParticipation) {
         const participationModel = (challengeParticipationService as any)
-          .challengeParticipationModel;
+          .participationModel;
         const participation = await participationModel.create({
           userId: user._id!.toString(),
           challengeId: challenge._id!.toString(),
