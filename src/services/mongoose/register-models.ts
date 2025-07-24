@@ -66,7 +66,8 @@ export function registerAllModels(connection: Mongoose) {
   if (!connection.models.ChallengeInvitation) {
     connection.model("ChallengeInvitation", challengeInvitationSchema());
 
-  if (!connection.models.ChallengeComment) {
-    connection.model("ChallengeComment", challengeCommentSchema());
+    if (!connection.models.ChallengeComment) {
+      connection.model("ChallengeComment", challengeCommentSchema());
+    }
   }
 }
