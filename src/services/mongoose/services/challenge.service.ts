@@ -1,7 +1,10 @@
 import { Mongoose, Model, isValidObjectId } from "mongoose";
 import { Challenge } from "../../../models/challenge.interface";
 
-export type CreateChallenge = Omit<Challenge, '_id' | 'createdAt' | 'updatedAt'>
+export type CreateChallenge = Omit<
+  Challenge,
+  "_id" | "createdAt" | "updatedAt"
+>;
 
 export class ChallengeService {
   readonly challengeModel: Model<Challenge>;
@@ -9,6 +12,7 @@ export class ChallengeService {
   constructor(public readonly _connection: Mongoose) {
     this.challengeModel = _connection.model<Challenge>("Challenge");
   }
+
     async createChallenge(challengeData: CreateChallenge): Promise<Challenge> {
         return this.challengeModel.create(challengeData);
     }
