@@ -1,25 +1,10 @@
+version: '3.8'
 services:
-  gymflow_app:
-    build: .
-    container_name: gymflow_app
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    volumes:
-      - ./src:/app/src
-      - ./dist:/app/dist
-    networks:
-      - gymflow_network
-    depends_on:
-      - gymflow_mongo
-    restart: always
-    
   gymflow_mongo:
     image: mongo:7.0
     container_name: gymflow_mongo
     ports:
-      - "27017:27017"
+      - "8001:27017"
     volumes:
       - gymflow_mongo_data:/data/db
     networks:
@@ -32,7 +17,7 @@ services:
     image: mongo-express:1.0.2
     container_name: gymflow_mongo_express
     ports:
-      - "8082:8081"
+      - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_SERVER: gymflow_mongo
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
@@ -44,10 +29,8 @@ services:
     depends_on:
       - gymflow_mongo
     restart: always
-
 volumes:
   gymflow_mongo_data:
-
 networks:
   gymflow_network:
     driver: bridge
