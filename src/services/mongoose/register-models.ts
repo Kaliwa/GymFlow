@@ -9,6 +9,7 @@ import { badgeSchema } from "./schema/badge.schema";
 import { userBadgeSchema } from "./schema/user-badge.schema";
 import { workoutSessionSchema } from "./schema/workout-session.schema";
 import { userProgressSchema } from "./schema/user-progress.schema";
+import { challengeCommentSchema } from "./schema/comment.schema";
 
 export function registerAllModels(connection: Mongoose) {
     if (!connection.models.User) {
@@ -49,5 +50,9 @@ export function registerAllModels(connection: Mongoose) {
 
   if (!connection.models.UserProgress) {
     connection.model("UserProgress", userProgressSchema());
+  }
+
+  if (!connection.models.ChallengeComment) {
+    connection.model("ChallengeComment", challengeCommentSchema());
   }
 }
