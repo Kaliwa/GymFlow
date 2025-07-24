@@ -159,8 +159,6 @@ export class ChallengeParticipationService {
       invitedBy,
       status: ParticipationStatus.JOINED,
       joinedAt: new Date(),
-      progress: 0,
-      workoutCount: 0,
     });
   }
 
@@ -286,31 +284,11 @@ export class ChallengeParticipationService {
     const completedParticipants = participations.filter(
       (p) => p.status === ParticipationStatus.COMPLETED
     ).length;
-    const averageProgress =
-      totalParticipants > 0
-        ? participations.reduce((sum, p) => sum + p.progress, 0) /
-          totalParticipants
-        : 0;
-
-    const topPerformers = participations
-      .sort(
-        (a, b) => b.progress - a.progress || b.workoutCount - a.workoutCount
-      )
-      .slice(0, 10)
-      .map((p) => ({
-        userId: (p.userId as any)._id,
-        firstName: (p.userId as any).firstName,
-        lastName: (p.userId as any).lastName,
-        progress: p.progress,
-        workoutCount: p.workoutCount,
-      }));
 
     return {
       totalParticipants,
       activeParticipants,
       completedParticipants,
-      averageProgress,
-      topPerformers,
     };
   }
 

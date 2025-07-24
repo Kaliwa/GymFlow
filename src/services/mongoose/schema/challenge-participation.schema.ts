@@ -36,17 +36,6 @@ export function challengeParticipationSchema(): Schema<ChallengeParticipation> {
         type: Date,
         required: false,
       },
-      progress: {
-        type: Number,
-        default: 0,
-        min: 0,
-        max: 100,
-      },
-      workoutCount: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
     },
     {
       timestamps: true,

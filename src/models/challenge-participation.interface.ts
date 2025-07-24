@@ -15,8 +15,6 @@ export interface ChallengeParticipation extends Timestamps {
   status: ParticipationStatus;
   joinedAt?: Date;
   completedAt?: Date;
-  progress: number;
-  workoutCount: number;
 }
 
 export interface ChallengeInvitation {
@@ -34,12 +32,4 @@ export interface ChallengeStats {
   totalParticipants: number;
   activeParticipants: number;
   completedParticipants: number;
-  averageProgress: number;
-  topPerformers: Array<{
-    userId: string;
-    firstName: string;
-    lastName: string;
-    progress: number;
-    workoutCount: number;
-  }>;
 }
